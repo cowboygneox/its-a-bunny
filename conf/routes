@@ -2,7 +2,10 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
+GET     /                           controllers.MathStringEvaluatorController.index
+GET     /socket                     controllers.MathStringEvaluatorController.socket
 POST    /evaluate                   controllers.MathStringEvaluatorController.evaluateExpression
+
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
