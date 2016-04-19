@@ -14,7 +14,7 @@
 
         <script>
             $(document).ready(function () {
-                run("history", "@routes.MathStringEvaluatorController.socket.webSocketURL()");
+                run("history", "expressionInput", "submit", "error", "@routes.MathStringEvaluatorController.evaluateExpression", "@routes.MathStringEvaluatorController.socket.webSocketURL()");
             });
         </script>
     </head>
@@ -26,14 +26,16 @@
             </div>
             <form>
                 <div class="form-group">
-                    <input type="text" class="form-control input-lg" id="exampleInputName2" placeholder="Enter your mathematical expression">
+                    <input type="text" class="form-control input-lg" id="expressionInput" placeholder="Enter your mathematical expression">
                 </div>
-                <button type="submit" class="btn btn-default">Calculate</button>
+                <button type="button" class="btn btn-default" id="submit">Calculate</button>
             </form>
 
-            <div id="history">
+            <div id="error"></div>
 
-            </div>
+            <h3>Equation History</h3>
+
+            <div id="history"></div>
         </div>
     </body>
 </html>
