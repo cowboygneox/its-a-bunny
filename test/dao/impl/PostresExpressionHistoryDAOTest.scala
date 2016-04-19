@@ -1,0 +1,47 @@
+package dao.impl
+
+import java.util.concurrent.TimeUnit
+
+import dao.ExpressionHistory
+import org.specs2.mutable.Specification
+import play.api.db.Database
+import play.api.test.WithServer
+import anorm._
+
+import scala.concurrent.Await
+import scala.concurrent.duration.FiniteDuration
+
+/**
+  * Created by sean on 4/19/16.
+  */
+class PostresExpressionHistoryDAOTest extends Specification {
+  sequential
+
+  implicit val timeout = FiniteDuration(1, TimeUnit.SECONDS)
+
+  "A PostgreSQL expression history DAO" should {
+    "insert a new expression" in new WithServer() {
+      val startTime = System.currentTimeMillis()
+
+      val database: Database = app.injector.instanceOf(classOf[Database])
+
+      database.withConnection { implicit connection =>
+        SQL("DELETE FROM ExpressionHistory").execute()
+      }
+
+      val dao = new PostresExpressionHistoryDAO(database)
+      Await.result(dao.insertExpression("1 + 1", 2.0), timeout)
+      val history: Seq[ExpressionHistory] = Await.result(dao.getHistory, timeout)
+
+      history.size must beEqualTo(1)
+
+      history.head must beLike {
+        case asdf: ExpressionHistory =>
+          asdf.expression must beEqualTo("1 + 1")
+          asdf.result must beEqualTo(2.0)
+          asdf.id must beSome
+          asdf.ts must beGreaterThanOrEqualTo(startTime)
+      }
+    }
+  }
+}
