@@ -43,5 +43,26 @@ class PostresExpressionHistoryDAOTest extends Specification {
           asdf.ts must beGreaterThanOrEqualTo(startTime)
       }
     }
+    "return history descending by timestamp" in new WithServer() {
+      val startTime = System.currentTimeMillis()
+
+      val database: Database = app.injector.instanceOf(classOf[Database])
+
+      database.withConnection { implicit connection =>
+        SQL("DELETE FROM ExpressionHistory").execute()
+      }
+
+      val dao = new PostresExpressionHistoryDAO(database)
+      Await.result(dao.insertExpression("1 + 1", 2.0), timeout)
+      Await.result(dao.insertExpression("1 + 2", 3.0), timeout)
+      Await.result(dao.insertExpression("1 + 3", 4.0), timeout)
+      val history: Seq[ExpressionHistory] = Await.result(dao.getHistory, timeout)
+
+      history.size must beEqualTo(3)
+
+      history.zip(history.tail).map {
+        case (left, right) => left.ts >= right.ts
+      }
+    }
   }
 }

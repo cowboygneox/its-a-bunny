@@ -25,7 +25,7 @@ class PostresExpressionHistoryDAO(database: Database) extends ExpressionHistoryD
 
   override def getHistory: Future[Seq[ExpressionHistory]] = Future {
     database.withConnection { implicit connection =>
-      SQL("SELECT id, expression, result, ts FROM ExpressionHistory").as(rowParser.*)
+      SQL("SELECT id, expression, result, ts FROM ExpressionHistory ORDER BY ts DESC").as(rowParser.*)
     }
   }
 }
