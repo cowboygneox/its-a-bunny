@@ -10,12 +10,14 @@ import scala.util.{Failure, Try}
   */
 case class EvalExMathStringEvalulatorException(msg: String) extends RuntimeException
 
-class EvalExMathStringEvalulator(precision: Int = 2) extends MathStringEvaluator {
+class EvalExMathStringEvalulator extends MathStringEvaluator {
+  private def decimalPrecision = 2
+
   override def evaluateExpression(mathString: String): Try[Double] = {
     val expression = new Expression(mathString)
 
     Try {
-      (expression.eval().doubleValue() * precision).round / precision.toDouble
+      (expression.eval().doubleValue() * decimalPrecision).round / decimalPrecision.toDouble
     }.recoverWith {
       case ex if ex.getClass == classOf[expression.ExpressionException] =>
         Failure(EvalExMathStringEvalulatorException(ex.getLocalizedMessage))

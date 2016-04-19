@@ -3,6 +3,7 @@ package dao.impl
 import java.sql.Connection
 
 import anorm._
+import com.google.inject.Inject
 import dao.{ExpressionHistory, ExpressionHistoryDAO}
 import play.api.db.Database
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
@@ -13,7 +14,7 @@ import scala.concurrent.Future
 /**
   * Created by sean on 4/19/16.
   */
-class PostresExpressionHistoryDAO(database: Database) extends ExpressionHistoryDAO {
+class PostresExpressionHistoryDAO @Inject() (database: Database) extends ExpressionHistoryDAO {
 
   private val maximumTableSize = 10
 

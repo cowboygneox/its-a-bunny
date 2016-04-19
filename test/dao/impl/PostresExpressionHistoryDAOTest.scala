@@ -2,11 +2,11 @@ package dao.impl
 
 import java.util.concurrent.TimeUnit
 
+import anorm._
 import dao.ExpressionHistory
 import org.specs2.mutable.Specification
 import play.api.db.Database
-import play.api.test.WithServer
-import anorm._
+import util.ServerTest
 
 import scala.concurrent.Await
 import scala.concurrent.duration.FiniteDuration
@@ -20,7 +20,7 @@ class PostresExpressionHistoryDAOTest extends Specification {
   implicit val timeout = FiniteDuration(1, TimeUnit.SECONDS)
 
   "A PostgreSQL expression history DAO" should {
-    "insert a new expression" in new WithServer() {
+    "insert a new expression" in new ServerTest() {
       val startTime = System.currentTimeMillis()
 
       val database: Database = app.injector.instanceOf(classOf[Database])
@@ -43,7 +43,7 @@ class PostresExpressionHistoryDAOTest extends Specification {
           asdf.ts must beGreaterThanOrEqualTo(startTime)
       }
     }
-    "return history descending by timestamp" in new WithServer() {
+    "return history descending by timestamp" in new ServerTest() {
       val startTime = System.currentTimeMillis()
 
       val database: Database = app.injector.instanceOf(classOf[Database])
@@ -64,7 +64,7 @@ class PostresExpressionHistoryDAOTest extends Specification {
         case (left, right) => left.ts >= right.ts
       }
     }
-    "only persist the newest 10 results" in new WithServer() {
+    "only persist the newest 10 results" in new ServerTest() {
       val startTime = System.currentTimeMillis()
 
       val database: Database = app.injector.instanceOf(classOf[Database])
