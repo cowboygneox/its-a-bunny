@@ -32,8 +32,8 @@ class WebSocketActor(out: ActorRef, allHistory: Future[Seq[ExpressionHistory]]) 
 
   private def sendMessage[T <: WebSocketMessages](message: T): Unit = {
     val json = message match {
-      case m: NewHistory => newHistoryWrites.writes(m).toString()
-      case m: AllHistory => allHistoryWrites.writes(m).toString()
+      case m: NewHistory => newHistoryWrites.writes(m)
+      case m: AllHistory => allHistoryWrites.writes(m)
     }
     out ! json
   }

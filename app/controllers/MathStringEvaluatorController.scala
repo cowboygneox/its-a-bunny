@@ -8,7 +8,7 @@ import com.google.inject.Inject
 import dao.ExpressionHistoryDAO
 import eval.MathStringEvaluator
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
-import play.api.libs.json.{JsError, JsSuccess, Json}
+import play.api.libs.json.{JsError, JsSuccess, JsValue, Json}
 import play.api.libs.streams.ActorFlow
 import play.api.mvc.{Action, Controller, WebSocket}
 
@@ -45,7 +45,7 @@ class MathStringEvaluatorController @Inject()(implicit evaluator: MathStringEval
     }
   }
 
-  def socket = WebSocket.accept[String, String] { request =>
+  def socket = WebSocket.accept[JsValue, JsValue] { request =>
     ActorFlow.actorRef(out => Props(new WebSocketActor(out, historyDAO.getHistory)))
   }
 }
