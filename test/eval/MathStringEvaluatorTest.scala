@@ -1,6 +1,6 @@
 package eval
 
-import eval.impl.EvalExMathStringEvalulatorException
+import eval.impl.EvalExMathStringEvaluatorException
 import org.specs2.specification.core.Fragments
 
 import scala.util.{Failure, Success, Try}
@@ -25,8 +25,8 @@ abstract class MathStringEvaluatorTest extends org.specs2.mutable.Specification 
     "2 * 3 + 4"     -> Success(10.0),
 
     // failures
-    "2 -= 1"                          -> Failure(EvalExMathStringEvalulatorException("Unknown operator '-=' at position 3")),
-    "String string = \"Some string\"" -> Failure(EvalExMathStringEvalulatorException("Unknown operator '\"' at position 17"))
+    "2 -= 1"                          -> Failure(EvalExMathStringEvaluatorException("Unknown operator '-=' at position 3")),
+    "String string = \"Some string\"" -> Failure(EvalExMathStringEvaluatorException("Unknown operator '\"' at position 17"))
   )
 
   s"A ${evaluator.getClass.getSimpleName}" should {

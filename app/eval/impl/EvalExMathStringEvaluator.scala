@@ -8,9 +8,9 @@ import scala.util.{Failure, Try}
 /**
   * Created by sean on 4/19/16.
   */
-case class EvalExMathStringEvalulatorException(msg: String) extends RuntimeException
+case class EvalExMathStringEvaluatorException(msg: String) extends RuntimeException
 
-class EvalExMathStringEvalulator extends MathStringEvaluator {
+class EvalExMathStringEvaluator extends MathStringEvaluator {
   private def decimalPrecision = 2
 
   override def evaluateExpression(mathString: String): Try[Double] = {
@@ -20,7 +20,7 @@ class EvalExMathStringEvalulator extends MathStringEvaluator {
       (expression.eval().doubleValue() * decimalPrecision).round / decimalPrecision.toDouble
     }.recoverWith {
       case ex if ex.getClass == classOf[expression.ExpressionException] =>
-        Failure(EvalExMathStringEvalulatorException(ex.getLocalizedMessage))
+        Failure(EvalExMathStringEvaluatorException(ex.getLocalizedMessage))
     }
   }
 }
