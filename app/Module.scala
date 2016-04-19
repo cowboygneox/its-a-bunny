@@ -1,6 +1,7 @@
 import com.google.inject.AbstractModule
+import com.google.inject.name.Names
 import dao.ExpressionHistoryDAO
-import dao.impl.PostresExpressionHistoryDAO
+import dao.impl.{ExpressionHistoryDAOActor, PostresExpressionHistoryDAO}
 import eval.MathStringEvaluator
 import eval.impl.EvalExMathStringEvalulator
 
@@ -10,6 +11,7 @@ import eval.impl.EvalExMathStringEvalulator
 class Module extends AbstractModule {
   override def configure(): Unit = {
     bind(classOf[MathStringEvaluator]).to(classOf[EvalExMathStringEvalulator])
-    bind(classOf[ExpressionHistoryDAO]).to(classOf[PostresExpressionHistoryDAO])
+    bind(classOf[ExpressionHistoryDAO]).annotatedWith(Names.named("impl")).to(classOf[PostresExpressionHistoryDAO])
+    bind(classOf[ExpressionHistoryDAO]).to(classOf[ExpressionHistoryDAOActor])
   }
 }

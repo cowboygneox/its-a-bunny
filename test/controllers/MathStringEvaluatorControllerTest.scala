@@ -5,16 +5,19 @@ import java.util.concurrent.TimeUnit
 import dao.ExpressionHistoryDAO
 import org.specs2.mutable.Specification
 import play.api.Application
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.test.WsTestClient
 import util.ServerTest
 
-import scala.concurrent.Await
 import scala.concurrent.duration.FiniteDuration
+import scala.concurrent.{Await, Future}
 
 /**
   * Created by sean on 4/19/16.
   */
 class MathStringEvaluatorControllerTest extends Specification {
+  sequential
+
   implicit val duration = FiniteDuration(1, TimeUnit.SECONDS)
 
   val validJson = {
@@ -45,6 +48,19 @@ class MathStringEvaluatorControllerTest extends Specification {
 
       Await.result(WsTestClient.wsUrl("/evaluate").withHeaders("Content-Type" -> "application/json").post(formPayload), duration).status must beEqualTo(400)
       verifyHistoryCount(0)
+    }
+    "handle stress" in new ServerTest() {
+      implicit val duration = FiniteDuration(30, TimeUnit.SECONDS)
+
+      val allFutures = Future.sequence(
+        (1 to 1000).map { _ =>
+          WsTestClient.wsUrl("/evaluate").withHeaders("Content-Type" -> "application/json").post(validJson)
+        }
+      )
+
+      Await.result(allFutures, duration)
+
+      verifyHistoryCount(10)
     }
   }
 }
