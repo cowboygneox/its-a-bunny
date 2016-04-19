@@ -64,5 +64,26 @@ class PostresExpressionHistoryDAOTest extends Specification {
         case (left, right) => left.ts >= right.ts
       }
     }
+    "only persist the newest 10 results" in new WithServer() {
+      val startTime = System.currentTimeMillis()
+
+      val database: Database = app.injector.instanceOf(classOf[Database])
+
+      database.withConnection { implicit connection =>
+        SQL("DELETE FROM ExpressionHistory").execute()
+      }
+
+      val dao = new PostresExpressionHistoryDAO(database)
+
+      (1 to 15).foreach { i =>
+        Await.result(dao.insertExpression(s"1 + $i", i + 1), timeout)
+      }
+
+      val history: Seq[ExpressionHistory] = Await.result(dao.getHistory, timeout)
+
+      history.size must beEqualTo(10)
+
+      history.head.expression must beEqualTo("1 + 15")
+    }
   }
 }
