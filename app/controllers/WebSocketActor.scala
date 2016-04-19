@@ -1,10 +1,13 @@
 package controllers
 
+import java.util.concurrent.TimeUnit
+
 import akka.actor.{Actor, ActorRef}
 import dao.ExpressionHistory
 import play.api.libs.json.Json
 
 import scala.concurrent.Future
+import scala.concurrent.duration.FiniteDuration
 
 /**
   * Created by sean on 4/19/16.
@@ -20,6 +23,8 @@ class WebSocketActor(out: ActorRef, allHistory: Future[Seq[ExpressionHistory]]) 
       case history =>
         self ! AllHistory(history)
     }
+    val pingFrequency = FiniteDuration(15, TimeUnit.SECONDS)
+    context.system.scheduler.schedule(pingFrequency, pingFrequency, out, Json.obj("msg" -> "keep-alive"))
   }
 
   override def postStop(): Unit = {

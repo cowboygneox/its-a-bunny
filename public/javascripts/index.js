@@ -4,6 +4,7 @@ function run(divId, expressionId, submitId, errorId, postUrl, wsUrl) {
     var webSocket = new WebSocket(wsUrl);
 
     webSocket.onmessage = function (event) {
+        console.log("Received message from server: " + event.data);
         var json = JSON.parse(event.data);
         if (json.allHistory) {
             calculationHistory = json.allHistory;
@@ -14,7 +15,6 @@ function run(divId, expressionId, submitId, errorId, postUrl, wsUrl) {
             } else {
                 calculationHistory = [json.history].concat(calculationHistory);
             }
-            console.log(calculationHistory);
             $("#" + divId).html(formatHistoryTable());
         }
     }
