@@ -38,7 +38,7 @@ class ExpressionHistoryDAOActor @Inject() (@Named("impl") expressionHistoryDAO: 
 
   val actor = actorSystem.actorOf(Props(new DatabaseWorker))
 
-  override def insertExpression(expression: String, result: Double): Future[Unit] = (actor ? (expression, result)).mapTo[Unit]
+  override def insertExpression(expression: String, result: Double): Future[ExpressionHistory] = (actor ? (expression, result)).mapTo[ExpressionHistory]
 
   override def getHistory: Future[Seq[ExpressionHistory]] = (actor ? "getHistory").mapTo[Seq[ExpressionHistory]]
 }

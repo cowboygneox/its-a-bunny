@@ -30,18 +30,19 @@ class PostresExpressionHistoryDAOTest extends Specification {
       }
 
       val dao = new PostresExpressionHistoryDAO(database)
-      Await.result(dao.insertExpression("1 + 1", 2.0), timeout)
+      val result = Await.result(dao.insertExpression("1 + 1", 2.0), timeout)
+      result must beLike {
+        case asdf: ExpressionHistory =>
+          asdf.expression must beEqualTo("1 + 1")
+          asdf.result must beEqualTo(2.0)
+          asdf.id must beGreaterThan(0L)
+          asdf.ts must beGreaterThanOrEqualTo(startTime)
+      }
       val history: Seq[ExpressionHistory] = Await.result(dao.getHistory, timeout)
 
       history.size must beEqualTo(1)
 
-      history.head must beLike {
-        case asdf: ExpressionHistory =>
-          asdf.expression must beEqualTo("1 + 1")
-          asdf.result must beEqualTo(2.0)
-          asdf.id must beSome
-          asdf.ts must beGreaterThanOrEqualTo(startTime)
-      }
+      history.head must beEqualTo(result)
     }
     "return history descending by timestamp" in new ServerTest() {
       val startTime = System.currentTimeMillis()

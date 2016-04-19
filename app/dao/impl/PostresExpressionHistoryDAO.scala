@@ -18,20 +18,23 @@ class PostresExpressionHistoryDAO @Inject() (database: Database) extends Express
 
   private val maximumTableSize = 10
 
-  override def insertExpression(expression: String, result: Double): Future[Unit] = Future {
+  override def insertExpression(expression: String, result: Double): Future[ExpressionHistory] = Future {
     database.withConnection { implicit connection =>
       val history = getHistoryInternal
 
       val overflow = history.drop(maximumTableSize - 1) // ensure there is room for the new value
       if (overflow.nonEmpty) {
         BatchSql("DELETE FROM ExpressionHistory WHERE id = {id}",
-          overflow.map(h => NamedParameter("id", h.id.get))
+          overflow.map(h => NamedParameter("id", h.id))
         ).execute()
       }
 
-      SQL("INSERT INTO ExpressionHistory (expression, result, ts) VALUES ({expression},{result},{ts})")
-        .on('expression -> expression, 'result -> result, 'ts -> System.currentTimeMillis())
-        .execute()
+      val time = System.currentTimeMillis()
+      val newId = SQL("INSERT INTO ExpressionHistory (expression, result, ts) VALUES ({expression},{result},{ts})")
+        .on('expression -> expression, 'result -> result, 'ts -> time)
+        .executeInsert()
+
+      ExpressionHistory(newId.get, expression, result, time)
     }
   }
 
