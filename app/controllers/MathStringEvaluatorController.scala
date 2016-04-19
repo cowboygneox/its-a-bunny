@@ -7,6 +7,7 @@ import akka.stream.Materializer
 import com.google.inject.Inject
 import dao.ExpressionHistoryDAO
 import eval.MathStringEvaluator
+import play.api.Configuration
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json.{JsError, JsSuccess, JsValue, Json}
 import play.api.libs.streams.ActorFlow
@@ -19,13 +20,13 @@ import scala.util.{Failure, Success}
   * Created by sean on 4/19/16.
   */
 @Singleton
-class MathStringEvaluatorController @Inject()(implicit evaluator: MathStringEvaluator, historyDAO: ExpressionHistoryDAO, actorSystem: ActorSystem, materializer: Materializer) extends Controller {
+class MathStringEvaluatorController @Inject()(implicit evaluator: MathStringEvaluator, historyDAO: ExpressionHistoryDAO, actorSystem: ActorSystem, materializer: Materializer, configuration: Configuration) extends Controller {
   private case class Expression(expression: String)
 
   private implicit val expressionReads = Json.reads[Expression]
 
   def index = Action { implicit request =>
-    Ok(views.html.index())
+    Ok(views.html.index(configuration.getBoolean("application.sslmode").get))
   }
 
   def evaluateExpression = Action.async(parse.json) { jsResult =>

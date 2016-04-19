@@ -1,4 +1,4 @@
-@()(implicit request: play.api.mvc.Request[play.api.mvc.AnyContent])
+@(usingSSL: Boolean)(implicit request: play.api.mvc.Request[play.api.mvc.AnyContent])
 
 <!DOCTYPE html>
 <html lang="en">
@@ -14,7 +14,7 @@
 
         <script>
             $(document).ready(function () {
-                run("history", "expressionInput", "submit", "error", "@routes.MathStringEvaluatorController.evaluateExpression", "@routes.MathStringEvaluatorController.socket.webSocketURL()");
+                run("history", "expressionInput", "submit", "error", "@routes.MathStringEvaluatorController.evaluateExpression", "@routes.MathStringEvaluatorController.socket.webSocketURL(usingSSL)");
             });
         </script>
     </head>
