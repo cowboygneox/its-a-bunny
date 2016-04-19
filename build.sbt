@@ -9,7 +9,9 @@ scalaVersion := "2.11.7"
 libraryDependencies ++= Seq(
   jdbc,
   cache,
-  ws
+  ws,
+  specs2 % Test,
+  "com.udojava" % "EvalEx" % "1.0"
 )
 
 resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
